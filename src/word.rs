@@ -1,6 +1,6 @@
 // Represents a word in a word list. Each byte is expected to be a valid
 // lowercase ASCII character, a-z.
-#[derive(Eq, Ord, PartialEq, PartialOrd)]
+#[derive(Clone, Eq, Ord, PartialEq, PartialOrd)]
 pub struct Word {
     pub bytes: Vec<u8>,
     pub bitfield: u32,

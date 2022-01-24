@@ -4,29 +4,9 @@ mod utils;
 mod word;
 use clap::{Parser};
 use utils::*;
-// use rand::{Rng, rngs::StdRng};
-use std::io::{prelude::*};
+use std::io::prelude::*;
 use constraint::Constraint;
 use strategy::*;
-
-
-// #[derive(ArgEnum, Clone)]
-// enum PlayStrategy {
-//     Random,
-//     Greedy
-// }
-// 
-// 
-// #[derive(Subcommand)]
-// enum Command {
-//     Play {
-//         strategy: PlayStrategy,
-//         word_list: String,
-//     },
-//     Generate {
-//         word_list: String,
-//     }
-// }
 
 
 #[derive(Parser, Debug)]
@@ -47,18 +27,24 @@ fn main() -> std::io::Result<()> {
     println!("Number of turns: {}", args.turns);
 
     let mut input_buf = String::new();
-    //let mut rng = StdRng::from_entropy();
 
     for i in 0..args.turns {
-        println!("Turn {}; {} candidates", i + 1, words.len());
+        let num_words = words.len();
+        println!("Turn {}; {} candidates", i + 1, num_words);
+
+        let turns_left = args.turns - (i + 1);
+        let depth = if num_words < 100 {
+            turns_left
+        } else if num_words < 500 {
+            1
+        } else {
+            0
+        };
+        let (guess, value) = best_move_recursive(&words, depth);
+        println!("Guess: {}; value: {:?}", guess.as_str(), value);
 
         // Keep looping until the user enters a valid input
         loop {
-            let (guess, value) = greedy_best_move(&words, &EvalMode::ExpectedValue);
-            //let idx = rng.gen_range(0..words.len());
-            // let guess = &words[idx];
-            println!("Guess: {}; value: {:?}", guess.as_str(), value);
-
             print!("Wordle colors: ");
             std::io::stdout().flush()?;
             input_buf.clear();
